@@ -1,21 +1,24 @@
 import { Request, Response, Router } from "express";
 import { validateSchema } from "../middleware/schema.middleware";
-import { phoneSchema, passSchema } from "../schemas/index.schemas";
-import { createPhone, createRecharge, getPhone, getRecharches, getSummary } from "../controllers/index.controlers";
+import { signUpSchema } from "schemas/index.schemas";
+import { createUser } from "controllers/index.controlers";
 
 const passRouter = Router()
 
 
 passRouter.get("/health", (req: Request, res: Response) => {
-    res.sendStatus(200);
+    res.status(200).send("I'm OK!");
 }
 );
 
-passRouter.post("/phones", validateSchema(phoneSchema), createPhone);
-passRouter.post("/recharges", validateSchema(passSchema), createRecharge);
-passRouter.get("/phones/:document", getPhone);
-passRouter.get("/recharges/:number", getRecharches);
-passRouter.get("/summary/:document", getSummary);
+passRouter.post("/sign-up", validateSchema(signUpSchema), createUser);
+// passRouter.post("/sign-in", validateSchema(signInSchema), loginUser);
+// passRouter.delete("/erase", deleteUser);
+// passRouter.post("/credentials", validateSchema(credentialSchema), createCredential);
+// passRouter.get("/credentials", getCredentials);
+// passRouter.put("/credentials/:id", updateCredentials);
+// passRouter.delete("/credentials/:id", deleteCredentials);
+
 
 
 export default passRouter;
