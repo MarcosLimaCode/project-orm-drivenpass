@@ -1,0 +1,27 @@
+{
+  "name": "project-orm-drivenpass",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev src/index.ts"
+  },
+  "keywords": [],
+  "author": "Marcos Lima",
+  "license": "ISC",
+  "description": "Gerenciador de senhas",
+  "dependencies": {
+    "@prisma/client": "^6.11.1",
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "joi": "^17.13.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.10",
+    "prisma": "^6.11.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
