@@ -5,3 +5,8 @@ export type signUpProtocol = {
     password: string
 }
 
+export type signInProtocol = 
+    Omit<signUpProtocol, "id" | "email">;
+
+    
+
