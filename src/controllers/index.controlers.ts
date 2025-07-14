@@ -16,7 +16,7 @@ export async function loginUser(req: Request, res: Response) {
 
 export async function deleteUser(req: Request, res: Response) {
     const result = await deleteUserServices(req.body);
-    res.sendStatus(200);
+    res.sendStatus(204);
     return
 };
 
@@ -28,18 +28,20 @@ export async function createCredential(req: Request, res: Response) {
 
 export async function getCredentials(req: Request, res: Response) {
     const result = await getCredentialsServices(req.body);
-    res.sendStatus(200);
+    res.status(200).send(result);
     return
 };
 
 export async function updateCredentials(req: Request, res: Response) {
-    const result = await updateCredentialsServices(req.body);
-    res.sendStatus(200);
+    const id = req.params.id;
+    const result = await updateCredentialsServices(id);
+    res.sendStatus(204);
     return
 };
 
 export async function deleteCredentials(req: Request, res: Response) {
-    const result = await deleteCredentialsServices(req.body);
-    res.sendStatus(200);
+    const id = req.params.id;
+    const result = await deleteCredentialsServices(id);
+    res.sendStatus(204);
     return
 };

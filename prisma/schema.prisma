@@ -6,3 +6,26 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          Int          @id @default(autoincrement())
+  name        String
+  email       String       @unique
+  password    String
+  credentials Credential[]
+  createAt    DateTime     @default(now())
+
+  @@map("users")
+}
+
+model Credential {
+  id       Int     @id @default(autoincrement())
+  title    String
+  url      String?
+  username String?
+  password String?
+  user     User    @relation(fields: [userid], references: [id])
+  userid   Int
+
+  @@map("credentials")
+}
