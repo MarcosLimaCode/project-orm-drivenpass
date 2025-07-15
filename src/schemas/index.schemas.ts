@@ -8,7 +8,7 @@ export const signUpSchema = joi.object<signUpProtocol>({
 });
 
 export const signInSchema = joi.object<signInProtocol>({
-    name: joi.string().required().invalid(null),
+    email: joi.string().required().email().invalid(null),
     password: joi.string().required().min(6)
 });
 

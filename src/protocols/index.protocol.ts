@@ -6,7 +6,7 @@ export type signUpProtocol = {
 }
 
 export type signInProtocol =
-    Omit<signUpProtocol, "id" | "email">;
+    Omit<signUpProtocol, "id" | "name">;
 
 
 export type credentialProtocol = {

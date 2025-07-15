@@ -1,13 +1,17 @@
 import { credentialProtocol, signInProtocol, signUpProtocol } from "../protocols/index.protocol";
 import db from "../database/database";
+import bcrypt from "bcrypt";
 import prisma from "../database/database";
+import Cryptr from "cryptr";
+
+const cryptr = new Cryptr (process.env.CryptrSecretKey);
 
 export async function createUserRepository(req: signUpProtocol) {
     const result = await prisma.user.create({
         data: {
             name: req.name,
             email: req.email,
-            password: req.password
+            password: bcrypt.hashSync(req.password, 10)
         }
     })
     return result;
@@ -23,54 +27,77 @@ export async function verifyEmailRepository(email: string) {
 }
 
 export async function deleteUserRepository(req: signUpProtocol) { // cuidado com o protocolo usado
-        // FAZER a exclusao do usuario
+    // FAZER a exclusao do usuario
     return console.log(req)
 }
 
 
-export async function loginUserRepository(req: signUpProtocol) { // cuidado com o protocolo usado
-    return console.log(req)
-}
 
 
-export async function createCredentialRepository(req: credentialProtocol) { // cuidado com o protocolo usado
+export async function createCredentialRepository(req: credentialProtocol, userId: number) {
     const result = await prisma.credential.create({
         data: {
             title: req.title,
             url: req.url,
             username: req.username,
-            password: req.password,
-            userid: 3 // arrumar para achar o id do usuario logado
+            password: cryptr.encrypt(req.password),
+            userid: userId
         }
     })
     return result;
-    
+
 }
 
-export async function verifyTitleRepository(req: credentialProtocol) {
+export async function verifyTitleRepository(req: credentialProtocol, userId: number) {
     const result = await prisma.credential.findFirst({
         where: {
             title: req.title,
-            userid: 3 // arrumar para achar o id do usuario logado
+            userid: userId
         }
     })
     return result;
 }
 
 
-export async function getCredentialsRepository(req: credentialProtocol) { // cuidado com o protocolo usado
+export async function getCredentialsRepository(req: credentialProtocol, userId: number) {
     const result = await prisma.credential.findMany({
         where: {
-            userid: 3 // arrumar para achar o id do usuario logado
+            userid: userId
         }
     })
     return result;
 }
 
-export async function updateCredentialsRepository(id: string) { // cuidado com o protocolo usado
-    return console.log(id)
+export async function updateCredentialsRepository(id: number, req: credentialProtocol, userId: number) {
+    const result = await prisma.credential.update({
+        where: {
+            id
+        },
+        data: {
+            title: req.title,
+            url: req.url,
+            username: req.username,
+            password: req.password,
+            userid: userId
+        }
+    })
+    return result;
 }
 
-export async function deleteCredentialsRepository(id: string) { // cuidado com o protocolo usado
-    return console.log(id)
+export async function deleteCredentialsRepository(id: number) { 
+    const result = await prisma.credential.delete({
+        where: {
+            id
+        }
+    })
+    return result;
+}
+
+export async function verifyIdRepository(id: number) {
+    const result = await prisma.credential.findFirst({
+        where: {
+            id
+        }
+    })
+    return result;
 }

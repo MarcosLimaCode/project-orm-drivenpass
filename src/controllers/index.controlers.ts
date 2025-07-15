@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { createCredentialServices, createUserServices, deleteCredentialsServices, deleteUserServices, getCredentialsServices, loginUserServices, updateCredentialsServices } from "../services/index.service";
+import { createCredentialServices, deleteCredentialsServices, getCredentialsServices, updateCredentialsServices } from "../services/index.service";
+import { createUserServices, deleteUserServices } from "../services/user.service";
 
 
 export async function createUser(req: Request, res: Response) {
@@ -8,40 +9,37 @@ export async function createUser(req: Request, res: Response) {
     return
 };
 
-export async function loginUser(req: Request, res: Response) {
-    const result = await loginUserServices(req.body);
-    res.sendStatus(200);
-    return
-};
-
 export async function deleteUser(req: Request, res: Response) {
-    const result = await deleteUserServices(req.body);
+    await deleteUserServices(req.body);
     res.sendStatus(204);
     return
 };
 
 export async function createCredential(req: Request, res: Response) {
-    const result = await createCredentialServices(req.body);
+    const userId = res.locals.user;
+    await createCredentialServices(req.body, userId);
     res.sendStatus(200);
     return
 };
 
 export async function getCredentials(req: Request, res: Response) {
-    const result = await getCredentialsServices(req.body);
+    const userId = res.locals.user;
+    const result = await getCredentialsServices(req.body, userId);
     res.status(200).send(result);
     return
 };
 
 export async function updateCredentials(req: Request, res: Response) {
-    const id = req.params.id;
-    const result = await updateCredentialsServices(id);
+    const userId = res.locals.user;
+    const id = Number(req.params.id);
+    await updateCredentialsServices(id, req.body, userId);
     res.sendStatus(204);
     return
 };
 
 export async function deleteCredentials(req: Request, res: Response) {
-    const id = req.params.id;
-    const result = await deleteCredentialsServices(id);
+    const id = Number(req.params.id);
+    await deleteCredentialsServices(id);
     res.sendStatus(204);
     return
 };

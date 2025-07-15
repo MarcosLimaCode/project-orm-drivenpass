@@ -16,4 +16,9 @@ export default function errorHandler(error: any, req: Request, res: Response, ne
         res.status(422).send(error.message);
         return
     }
+
+    if (error.type === "UNAUTHORIZED") {
+        res.status(401).send(error.message);
+        return
+    }
 }

@@ -18,3 +18,10 @@ export function unprocessableError(entity: string) {
         message: `${entity}`
     }
 }
+
+export function unauthorizedError(entity: string) {
+    return {
+        type: "UNAUTHORIZED",
+        message: `${entity}`
+    }
+}

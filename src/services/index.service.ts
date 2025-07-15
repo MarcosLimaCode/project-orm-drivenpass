@@ -1,37 +1,34 @@
-import { credentialProtocol, signInProtocol, signUpProtocol } from "../protocols/index.protocol";
+import { credentialProtocol} from "../protocols/index.protocol";
 import { conflictError, notFoundError } from "../errors/errors";
-import { createCredentialRepository, createUserRepository, deleteCredentialsRepository, deleteUserRepository, getCredentialsRepository, loginUserRepository, updateCredentialsRepository, verifyEmailRepository, verifyTitleRepository } from "../repositories/index.repository";
+import { createCredentialRepository, deleteCredentialsRepository, getCredentialsRepository, updateCredentialsRepository, verifyIdRepository, verifyTitleRepository } from "../repositories/index.repository";
+import Cryptr from "cryptr";
+const cryptr = new Cryptr (process.env.CryptrSecretKey);
 
 
-export async function createUserServices(req: signUpProtocol) {
-    const foundEmail = await verifyEmailRepository(req.email);
-    if (foundEmail) throw conflictError("Email já cadastrado.");
-    return await createUserRepository(req);
-};
-
-export async function deleteUserServices(req: signUpProtocol) { // cuidado com o protoco usado
-    return await deleteUserRepository(req);
-};
-
-export async function loginUserServices(req: signUpProtocol) { // cuidado com o protoco usado
-    return await loginUserRepository(req);
-};
-
-
-export async function createCredentialServices(req: credentialProtocol) { 
-    const foundTitle = await verifyTitleRepository(req);
+export async function createCredentialServices(req: credentialProtocol, userId: number) { 
+    const foundTitle = await verifyTitleRepository(req, userId);
     if (foundTitle) throw conflictError("Título já cadastrado.");
-    return await createCredentialRepository(req);
+    return await createCredentialRepository(req, userId);
 };
 
-export async function getCredentialsServices(req: credentialProtocol) { 
-    return await getCredentialsRepository(req);
+export async function getCredentialsServices(req: credentialProtocol, userId: number) { 
+    const data = await getCredentialsRepository(req, userId);
+    const descryptedData = data.map((newData) => ({
+        ...newData,
+        password: cryptr.decrypt(newData.password)
+    }))
+
+    return descryptedData;
 };
 
-export async function updateCredentialsServices(id: string) { // cuidado com o protoco usado
-    return await updateCredentialsRepository(id);
+export async function updateCredentialsServices(id: number, req: credentialProtocol, userId: number) { 
+    const foundId = await verifyIdRepository(id);
+    if (!foundId) throw notFoundError("Senha não encontrada.");
+    return await updateCredentialsRepository(id, req, userId);
 };
 
-export async function deleteCredentialsServices(id: string) { // cuidado com o protoco usado
+export async function deleteCredentialsServices(id: number) { 
+    const foundId = await verifyIdRepository(id);
+    if (!foundId) throw notFoundError("Senha não encontrada.");
     return await deleteCredentialsRepository(id);
 };
