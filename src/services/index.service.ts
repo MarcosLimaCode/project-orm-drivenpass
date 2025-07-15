@@ -1,34 +1,50 @@
-import { credentialProtocol} from "../protocols/index.protocol";
+import { credentialProtocol } from "../protocols/index.protocol";
 import { conflictError, notFoundError } from "../errors/errors";
-import { createCredentialRepository, deleteCredentialsRepository, getCredentialsRepository, updateCredentialsRepository, verifyIdRepository, verifyTitleRepository } from "../repositories/index.repository";
+import {
+  createCredentialRepository,
+  deleteCredentialsRepository,
+  getCredentialsRepository,
+  updateCredentialsRepository,
+  verifyIdRepository,
+  verifyTitleRepository,
+} from "../repositories/index.repository";
 import Cryptr from "cryptr";
-const cryptr = new Cryptr (process.env.CryptrSecretKey);
+const cryptr = new Cryptr(process.env.CryptrSecretKey);
 
+export async function createCredentialServices(
+  req: credentialProtocol,
+  userId: number
+) {
+  const foundTitle = await verifyTitleRepository(req, userId);
+  if (foundTitle) throw conflictError("Título já cadastrado.");
+  return await createCredentialRepository(req, userId);
+}
 
-export async function createCredentialServices(req: credentialProtocol, userId: number) { 
-    const foundTitle = await verifyTitleRepository(req, userId);
-    if (foundTitle) throw conflictError("Título já cadastrado.");
-    return await createCredentialRepository(req, userId);
-};
+export async function getCredentialsServices(
+  req: credentialProtocol,
+  userId: number
+) {
+  const data = await getCredentialsRepository(req, userId);
+  const descryptedData = data.map((newData) => ({
+    ...newData,
+    password: cryptr.decrypt(newData.password),
+  }));
 
-export async function getCredentialsServices(req: credentialProtocol, userId: number) { 
-    const data = await getCredentialsRepository(req, userId);
-    const descryptedData = data.map((newData) => ({
-        ...newData,
-        password: cryptr.decrypt(newData.password)
-    }))
+  return descryptedData;
+}
 
-    return descryptedData;
-};
+export async function updateCredentialsServices(
+  id: number,
+  req: credentialProtocol,
+  userId: number
+) {
+  const foundId = await verifyIdRepository(id);
+  if (!foundId) throw notFoundError("Senha não encontrada.");
+  return await updateCredentialsRepository(id, req, userId);
+}
 
-export async function updateCredentialsServices(id: number, req: credentialProtocol, userId: number) { 
-    const foundId = await verifyIdRepository(id);
-    if (!foundId) throw notFoundError("Senha não encontrada.");
-    return await updateCredentialsRepository(id, req, userId);
-};
-
-export async function deleteCredentialsServices(id: number) { 
-    const foundId = await verifyIdRepository(id);
-    if (!foundId) throw notFoundError("Senha não encontrada.");
-    return await deleteCredentialsRepository(id);
-};
+export async function deleteCredentialsServices(id: number) {
+  const foundId = await verifyIdRepository(id);
+  if (!foundId) throw notFoundError("Senha não encontrada.");
+  return await deleteCredentialsRepository(id);
+}

@@ -3,10 +3,9 @@ import dotenv from "dotenv";
 import passRouter from "./routers/index.router";
 import errorHandler from "./middleware/errorHandler.middleware";
 
-dotenv.config()
+dotenv.config();
 const app = express();
-app.use(json())
-
+app.use(json());
 
 app.use(passRouter);
 app.use(errorHandler);
