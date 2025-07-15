@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import prisma from "../database/database";
 import Cryptr from "cryptr";
 
-const cryptr = new Cryptr (process.env.CryptrSecretKey);
+const cryptr = new Cryptr(process.env.CryptrSecretKey);
 
 export async function createUserRepository(req: signUpProtocol) {
     const result = await prisma.user.create({
@@ -26,12 +26,25 @@ export async function verifyEmailRepository(email: string) {
     return result;
 }
 
-export async function deleteUserRepository(req: signUpProtocol) { // cuidado com o protocolo usado
-    // FAZER a exclusao do usuario
-    return console.log(req)
+export async function deleteUserRepository(userId: number) {
+    const credentialsById = await prisma.credential.findMany({
+        where: {
+            userid: userId
+        }
+    })
+
+    credentialsById.map(credential => {
+        deleteCredentialsRepository(credential.id)
+    })
+
+
+    const result = await prisma.user.delete({
+        where: {
+            id: userId
+        }
+    });
+    return result;
 }
-
-
 
 
 export async function createCredentialRepository(req: credentialProtocol, userId: number) {
@@ -84,7 +97,7 @@ export async function updateCredentialsRepository(id: number, req: credentialPro
     return result;
 }
 
-export async function deleteCredentialsRepository(id: number) { 
+export async function deleteCredentialsRepository(id: number) {
     const result = await prisma.credential.delete({
         where: {
             id

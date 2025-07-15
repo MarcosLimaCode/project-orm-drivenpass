@@ -10,7 +10,8 @@ export async function createUser(req: Request, res: Response) {
 };
 
 export async function deleteUser(req: Request, res: Response) {
-    await deleteUserServices(req.body);
+    const userId = res.locals.user;
+    await deleteUserServices(userId);
     res.sendStatus(204);
     return
 };

@@ -27,6 +27,6 @@ export async function loginUserServices(req: signInProtocol) {
     return token
 };
 
-export async function deleteUserServices(req: signUpProtocol) { // cuidado com o protoco usado
-    return await deleteUserRepository(req);
+export async function deleteUserServices(userId: number) {
+    return await deleteUserRepository(userId);
 };

@@ -15,7 +15,7 @@ passRouter.get("/health", (req: Request, res: Response) => {
 
 passRouter.post("/sign-up", validateSchema(signUpSchema), createUser);
 passRouter.post("/sign-in", validateSchema(signInSchema), loginUser);
-passRouter.delete("/erase", deleteUser);
+passRouter.delete("/erase", validateToken, deleteUser);
 
 passRouter.post("/credentials", validateToken, validateSchema(credentialSchema), createCredential);
 passRouter.get("/credentials", validateToken, getCredentials);
