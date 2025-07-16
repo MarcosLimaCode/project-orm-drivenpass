@@ -101,7 +101,7 @@ export async function updateCredentialsRepository(
       title: req.title,
       url: req.url,
       username: req.username,
-      password: req.password,
+      password: cryptr.encrypt(req.password),
       userid: userId,
     },
   });

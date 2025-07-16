@@ -25,3 +25,10 @@ export function unauthorizedError(entity: string) {
     message: `${entity}`,
   };
 }
+
+export function badRequastError(entity: string) {
+  return {
+    type: "BAD REQUEST",
+    message: `${entity}`,
+  };
+}

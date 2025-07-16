@@ -25,4 +25,9 @@ export default function errorHandler(
     res.status(401).send(error.message);
     return;
   }
+
+  if (error.type === "BAD REQUEST") {
+    res.status(400).send(error.message);
+    return;
+  }
 }

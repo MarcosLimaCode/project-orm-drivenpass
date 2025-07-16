@@ -1,5 +1,9 @@
 import { credentialProtocol } from "../protocols/index.protocol";
-import { conflictError, notFoundError } from "../errors/errors";
+import {
+  badRequastError,
+  conflictError,
+  notFoundError,
+} from "../errors/errors";
 import {
   createCredentialRepository,
   deleteCredentialsRepository,
@@ -25,10 +29,14 @@ export async function getCredentialsServices(
   userId: number
 ) {
   const data = await getCredentialsRepository(req, userId);
+
   const descryptedData = data.map((newData) => ({
     ...newData,
     password: cryptr.decrypt(newData.password),
   }));
+
+  if (descryptedData.length === 0)
+    throw notFoundError("Credencial não encontrada.");
 
   return descryptedData;
 }
@@ -39,12 +47,12 @@ export async function updateCredentialsServices(
   userId: number
 ) {
   const foundId = await verifyIdRepository(id);
-  if (!foundId) throw notFoundError("Senha não encontrada.");
+  if (!foundId) throw badRequastError("Credencial não encontrada.");
   return await updateCredentialsRepository(id, req, userId);
 }
 
 export async function deleteCredentialsServices(id: number) {
   const foundId = await verifyIdRepository(id);
-  if (!foundId) throw notFoundError("Senha não encontrada.");
+  if (!foundId) throw badRequastError("Credencial não encontrada.");
   return await deleteCredentialsRepository(id);
 }
